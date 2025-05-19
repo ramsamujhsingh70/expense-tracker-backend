@@ -3,24 +3,23 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const nodemailer = require("nodemailer");
-
-// Models
-const Expense = require("./models/Expense");
-
-// Middleware
 const auth = require("./middleware/auth");
+const Expense = require("./models/Expense");
 
 dotenv.config();
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// DB Connect
-mongoose.connect(process.env.MONGO_URI)
+// DB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err.message));
 
-// Mailer
+// Email Setup
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -29,7 +28,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ Use external routes
+// ✅ Auth Routes
 app.use("/auth", require("./routes/auth"));
 
 // ✅ Forgot Password
@@ -59,12 +58,12 @@ app.post("/auth/forgot-password", async (req, res) => {
   }
 });
 
-// ✅ Expenses
+// ✅ Expense Routes
 app.get("/expenses", auth, async (req, res) => {
   try {
     const expenses = await Expense.find({ user: req.user.id }).sort({ date: -1 });
     res.json(expenses);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Failed to fetch expenses" });
   }
 });
@@ -86,7 +85,7 @@ app.post("/expenses", auth, async (req, res) => {
 
     const saved = await newExpense.save();
     res.status(201).json(saved);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Failed to add expense" });
   }
 });
@@ -98,10 +97,9 @@ app.put("/expenses/:id", auth, async (req, res) => {
       req.body,
       { new: true }
     );
-
-    if (!updated) return res.status(404).json({ error: "Unauthorized or not found" });
+    if (!updated) return res.status(404).json({ error: "Not found or unauthorized" });
     res.json(updated);
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Failed to update expense" });
   }
 });
@@ -112,13 +110,13 @@ app.delete("/expenses/:id", auth, async (req, res) => {
       _id: req.params.id,
       user: req.user.id,
     });
-
-    if (!deleted) return res.status(404).json({ error: "Unauthorized or not found" });
+    if (!deleted) return res.status(404).json({ error: "Not found or unauthorized" });
     res.json({ message: "Deleted" });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Failed to delete expense" });
   }
 });
 
+// Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
