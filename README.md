@@ -2,7 +2,6 @@
 
 ## ✅ `README.md` for **Backend Repo**
 
-```markdown
 # 🛠️ Expense Tracker Backend
 
 A secure and scalable backend for the Expense Tracker app, built using **Node.js**, **Express**, and **MongoDB Atlas**.
@@ -35,17 +34,14 @@ A secure and scalable backend for the Expense Tracker app, built using **Node.js
 
 Create a `.env` file in the root with:
 
-```env
 MONGO_URI=your-mongodb-uri
 JWT_SECRET=yourSuperSecretKey
 EMAIL_USER=yourgmail@gmail.com
 EMAIL_PASS=your-gmail-app-password
 FRONTEND_URL=https://expense-tracker-frontend-neon-eight.vercel.app/
 🧑‍💻 Run Locally
-bash
-Copy
-Edit
-git clone https://github.com/your-username/expense-tracker-backend.git
+
+git clone https://github.com/ramsamujhsingh70/expense-tracker-backend.git
 cd expense-tracker-backend
 npm install
 node server.js
@@ -53,9 +49,7 @@ node server.js
 Hosted on Render. Automatically connected to GitHub for CI/CD.
 
 📁 Folder Structure
-bash
-Copy
-Edit
+
 .
 ├── models/           # User.js and Expense.js
 ├── routes/           # auth.js (for login/signup)
